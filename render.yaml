@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: mediverse-ai
+    runtime: node
+    buildCommand: bun install && bun run build
+    startCommand: node dist/server/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
