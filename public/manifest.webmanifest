@@ -1,0 +1,12 @@
+{
+  "name": "MediVerse AI",
+  "short_name": "MediVerse",
+  "description": "AI-powered healthcare platform for patients, doctors and hospitals.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#12101f",
+  "theme_color": "#12101f",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "48x48", "type": "image/x-icon" }
+  ]
+}
