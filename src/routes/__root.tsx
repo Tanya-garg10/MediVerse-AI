@@ -10,7 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportError } from "../lib/error-reporting";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { BackToTop, FloatingAssistant, LoadingScreen } from "@/components/site/widgets";
@@ -43,7 +43,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
@@ -131,18 +131,18 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <DemoAuthProvider>
-      <LoadingScreen />
-      <div className="flex min-h-screen flex-col">
-        <Navbar />
-        <main className="flex-1">
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-      <FloatingAssistant />
-      <BackToTop />
-      <Toaster position="top-center" />
+        <LoadingScreen />
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
+          <main className="flex-1">
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+        <FloatingAssistant />
+        <BackToTop />
+        <Toaster position="top-center" />
       </DemoAuthProvider>
     </QueryClientProvider>
   );

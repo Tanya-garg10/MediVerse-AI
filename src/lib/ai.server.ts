@@ -1,11 +1,10 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { stepCountIs, streamText, tool } from "ai";
 import { z } from "zod";
-import { createLovableAiGatewayRunIdFetch } from "./ai-gateway.server";
 import { hasTavily, tavilySearch } from "./tavily.server";
 import type { ChatReply, Prediction } from "./ai.functions";
 
-const MODEL = "openai/gpt-5.6-sol";
+const MODEL = "gpt-4o";
 
 const SYSTEM = `You are MediVerse AI, a careful healthcare information assistant for a product demo.
 - Answer clearly and concisely in the user's language, using short paragraphs or bullets.
@@ -16,19 +15,10 @@ const SYSTEM = `You are MediVerse AI, a careful healthcare information assistant
 type Source = { title: string; url: string };
 
 function buildModel() {
-  const key = process.env["LOVABLE_API_KEY"];
+  const key = process.env["OPENAI_API_KEY"];
   if (!key) return null;
-  const runIdFetch = createLovableAiGatewayRunIdFetch();
-  const lovable = createOpenAI({
-    baseURL: "https://ai.gateway.lovable.dev/v1",
-    apiKey: key,
-    headers: {
-      "Lovable-API-Key": key,
-      "X-Lovable-AIG-SDK": "vercel-ai-sdk",
-    },
-    fetch: runIdFetch.fetch as typeof fetch,
-  });
-  return lovable.responses(MODEL);
+  const openai = createOpenAI({ apiKey: key });
+  return openai(MODEL);
 }
 
 function searchTool(sources: Source[]) {
@@ -58,19 +48,8 @@ function searchTool(sources: Source[]) {
   });
 }
 
-const providerOptions = {
-  openai: {
-    forceReasoning: true,
-    reasoningEffort: "low",
-    reasoningSummary: "auto",
-    store: false,
-    include: ["reasoning.encrypted_content"],
-  },
-};
-
-
 const DEMO_REPLY =
-  "Demo mode: live AI is not connected yet. I can still walk you through MediVerse — ask about symptom triage, report analysis, appointments or pricing. Add a Tavily API key and Lovable AI to get real, web-grounded answers.";
+  "Demo mode: live AI is not connected yet. I can still walk you through MediVerse — ask about symptom triage, report analysis, appointments or pricing. Add an OpenAI API key and Tavily API key to get real, web-grounded answers.";
 
 export async function runAssistant(
   messages: { role: "user" | "assistant"; text: string }[],
@@ -86,7 +65,6 @@ export async function runAssistant(
       messages: messages.map((m) => ({ role: m.role, content: m.text })),
       tools: { web_search: searchTool(sources) },
       stopWhen: stepCountIs(8),
-      providerOptions,
     });
 
     const text = (await result.text).trim();
@@ -146,7 +124,7 @@ export async function runPrediction(symptoms: string): Promise<Prediction> {
     return {
       conditions: DEMO_PREDICTION,
       advice:
-        "Demo mode: connect Lovable AI and Tavily for real, web-grounded risk analysis. This is not medical advice.",
+        "Demo mode: add an OpenAI API key for real, web-grounded risk analysis. This is not medical advice.",
       sources: [],
       demo: true,
     };
@@ -163,7 +141,6 @@ Search the web for current clinical guidance if useful, then return ONLY a JSON 
 Give 3-4 plausible conditions ordered by likelihood. No markdown, no extra text.`,
       tools: { web_search: searchTool(sources) },
       stopWhen: stepCountIs(6),
-      providerOptions,
     });
 
     const parsed = PredictionSchema.safeParse(parseJson(await result.text));

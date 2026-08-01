@@ -1,29 +1,58 @@
-# Welcome to your Lovable project
+# MediVerse AI
 
-This project was built with [Lovable](https://lovable.dev).
+An intelligent healthcare companion powered by AI — helping users understand symptoms, explore medical information, and navigate their health journey with confidence.
 
-## Build with Lovable
+## Features
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+- 🩺 AI-powered symptom checker
+- 💊 Medication information & interaction insights
+- 📋 Personalized health dashboard
+- 🔍 Medical knowledge search powered by Tavily
+- 🌙 Dark / light theme support
+- 🔐 Secure authentication
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+## Tech Stack
 
-## Development
+- [TanStack Start](https://tanstack.com/start) — full-stack React framework
+- [TypeScript](https://www.typescriptlang.org/)
+- [React 19](https://react.dev/)
+- [Tailwind CSS v4](https://tailwindcss.com/)
+- [Radix UI](https://www.radix-ui.com/) — accessible component primitives
+- [AI SDK](https://sdk.vercel.ai/) — streaming AI responses
+- [Tavily](https://tavily.com/) — real-time medical search
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Getting Started
+
+You need [Node.js](https://nodejs.org/) and [Bun](https://bun.sh/) installed.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+git clone https://github.com/codewithprernaa/MediVerse-AI.git
+cd MediVerse-AI
+bun install
+bun run dev
 ```
 
-## Built with
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+## Scripts
+
+| Command | Description |
+|---|---|
+| `bun run dev` | Start development server |
+| `bun run build` | Build for production |
+| `bun run preview` | Preview production build |
+| `bun run lint` | Run ESLint |
+| `bun run format` | Format code with Prettier |
+
+## Environment Variables
+
+Create a `.env` file in the root:
+
+```env
+OPENAI_API_KEY=your_openai_api_key
+TAVILY_API_KEY=your_tavily_api_key
+```
+
+## License
+
+MIT
