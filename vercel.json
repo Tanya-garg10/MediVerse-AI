@@ -1,21 +1,12 @@
 {
     "buildCommand": "bun run build",
     "installCommand": "bun install",
-    "framework": null,
     "outputDirectory": "dist/client",
-    "functions": {
-        "dist/server/server.js": {
-            "runtime": "nodejs22.x"
-        }
-    },
-    "routes": [
+    "framework": null,
+    "rewrites": [
         {
-            "src": "/assets/(.*)",
-            "dest": "/assets/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/dist/server/server.js"
+            "source": "/(.*)",
+            "destination": "/dist/server/server.js"
         }
     ]
 }
