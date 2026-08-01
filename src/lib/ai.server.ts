@@ -1,12 +1,12 @@
-import { createOpenAI } from "@ai-sdk/openai";
+import { createGroq } from "@ai-sdk/groq";
 import { stepCountIs, streamText, tool } from "ai";
 import { z } from "zod";
 import { hasTavily, tavilySearch } from "./tavily.server";
 import type { ChatReply, Prediction } from "./ai.functions";
 
-const MODEL = "gpt-4o";
+const MODEL = "llama-3.3-70b-versatile";
 
-const SYSTEM = `You are MediVerse AI, a careful healthcare information assistant for a product demo.
+const SYSTEM = `You are MediVerse AI, a careful healthcare information assistant.
 - Answer clearly and concisely in the user's language, using short paragraphs or bullets.
 - Use the web_search tool for anything time-sensitive, factual, or medical guidance you should verify.
 - Never give a definitive diagnosis. Always add a brief safety note and advise seeing a clinician for anything serious.
@@ -15,10 +15,10 @@ const SYSTEM = `You are MediVerse AI, a careful healthcare information assistant
 type Source = { title: string; url: string };
 
 function buildModel() {
-  const key = process.env["OPENAI_API_KEY"];
+  const key = process.env["GROQ_API_KEY"];
   if (!key) return null;
-  const openai = createOpenAI({ apiKey: key });
-  return openai(MODEL);
+  const groq = createGroq({ apiKey: key });
+  return groq(MODEL);
 }
 
 function searchTool(sources: Source[]) {
@@ -49,7 +49,7 @@ function searchTool(sources: Source[]) {
 }
 
 const DEMO_REPLY =
-  "Demo mode: live AI is not connected yet. I can still walk you through MediVerse — ask about symptom triage, report analysis, appointments or pricing. Add an OpenAI API key and Tavily API key to get real, web-grounded answers.";
+  "Demo mode: live AI is not connected yet. I can still walk you through MediVerse — ask about symptom triage, report analysis, appointments or pricing. Add a Groq API key and Tavily API key to get real, web-grounded answers.";
 
 export async function runAssistant(
   messages: { role: "user" | "assistant"; text: string }[],
@@ -124,7 +124,7 @@ export async function runPrediction(symptoms: string): Promise<Prediction> {
     return {
       conditions: DEMO_PREDICTION,
       advice:
-        "Demo mode: add an OpenAI API key for real, web-grounded risk analysis. This is not medical advice.",
+        "Demo mode: add a Groq API key for real, web-grounded risk analysis. This is not medical advice.",
       sources: [],
       demo: true,
     };
