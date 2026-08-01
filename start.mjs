@@ -37,7 +37,8 @@ const server = createServer(async (req, res) => {
         const url = req.url || "/";
 
         // Serve static files from dist/client
-        if (url.startsWith("/assets/") || url === "/favicon.ico" || url === "/favicon.svg" || url === "/manifest.webmanifest" || url === "/robots.txt") {
+        const staticFiles = ["/favicon.ico", "/favicon.svg", "/manifest.webmanifest", "/robots.txt"];
+        if (url.startsWith("/assets/") || staticFiles.includes(url)) {
             const filePath = join(clientDir, url);
             if (existsSync(filePath) && statSync(filePath).isFile()) {
                 const ext = extname(filePath);

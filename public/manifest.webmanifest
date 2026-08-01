@@ -4,9 +4,19 @@
   "description": "AI-powered healthcare platform for patients, doctors and hospitals.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#12101f",
-  "theme_color": "#12101f",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "icons": [
-    { "src": "/favicon.ico", "sizes": "48x48", "type": "image/x-icon" }
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
   ]
 }
