@@ -1,25 +1,64 @@
 import { createServer } from "http";
+import { createReadStream, existsSync, statSync } from "fs";
+import { join, extname } from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || "3000";
 const HOST = "0.0.0.0";
+const clientDir = join(__dirname, "dist", "client");
+
+const MIME_TYPES = {
+    ".js": "application/javascript",
+    ".mjs": "application/javascript",
+    ".css": "text/css",
+    ".html": "text/html",
+    ".json": "application/json",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".svg": "image/svg+xml",
+    ".ico": "image/x-icon",
+    ".webp": "image/webp",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
+    ".ttf": "font/ttf",
+    ".webmanifest": "application/manifest+json",
+};
 
 console.log(`Starting MediVerse AI on ${HOST}:${PORT}...`);
 
-// Import the built SSR handler (exports a fetch-compatible default)
 const { default: handler } = await import("./dist/server/server.js");
 
 const server = createServer(async (req, res) => {
     try {
-        // Build a Web API Request from the Node.js req
+        const url = req.url || "/";
+
+        // Serve static files from dist/client
+        if (url.startsWith("/assets/") || url === "/favicon.ico" || url === "/favicon.svg" || url === "/manifest.webmanifest" || url === "/robots.txt") {
+            const filePath = join(clientDir, url);
+            if (existsSync(filePath) && statSync(filePath).isFile()) {
+                const ext = extname(filePath);
+                const mime = MIME_TYPES[ext] || "application/octet-stream";
+                res.setHeader("Content-Type", mime);
+                res.setHeader("Cache-Control", url.startsWith("/assets/") ? "public, max-age=31536000, immutable" : "public, max-age=3600");
+                createReadStream(filePath).pipe(res);
+                return;
+            }
+        }
+
+        // All other requests go to SSR handler
         const protocol = "https";
         const host = req.headers.host || `localhost:${PORT}`;
-        const url = `${protocol}://${host}${req.url}`;
+        const fullUrl = `${protocol}://${host}${url}`;
 
         const chunks = [];
         for await (const chunk of req) chunks.push(chunk);
         const body = chunks.length > 0 ? Buffer.concat(chunks) : undefined;
 
-        const request = new Request(url, {
+        const request = new Request(fullUrl, {
             method: req.method,
             headers: req.headers,
             body: body && body.length > 0 ? body : undefined,
