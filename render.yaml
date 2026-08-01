@@ -3,7 +3,7 @@ services:
     name: mediverse-ai
     runtime: node
     buildCommand: bun install && bun run build
-    startCommand: node dist/server/server.js
+    startCommand: node start.mjs
     envVars:
       - key: NODE_ENV
         value: production
